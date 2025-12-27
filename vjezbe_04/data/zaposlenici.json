@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "ime": "Ana",
+    "prezime": "Anić",
+    "godina_staza": 3,
+    "pozicija": "programer"
+  },
+  {
+    "id": 2,
+    "ime": "Iva",
+    "prezime": "Ivić",
+    "godina_staza": 5,
+    "pozicija": "dizajner"
+  },
+  {
+    "id": 3,
+    "ime": "Marko",
+    "prezime": "Markić",
+    "godina_staza": 2,
+    "pozicija": "direktor"
+  },
+  {
+    "id": 4,
+    "ime": "Mario",
+    "prezime": "Marijć",
+    "godina_staza": 1,
+    "pozicija": "programer"
+  },
+  {
+    "id": 5,
+    "ime": "Maja",
+    "prezime": "Majić",
+    "godina_staza": 7,
+    "pozicija": "programer"
+  }
+]

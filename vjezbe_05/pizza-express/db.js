@@ -8,14 +8,11 @@ let db_name = process.env.MONGO_DB_NAME;
 
 async function connectToDatabase() {
   try {
-    if (!mongoURI || !db_name) {
-      throw new Error("Ne postoji mongoURI ili db_name u .env datoteki.");
-    }
     const client = new MongoClient(mongoURI);
     await client.connect();
     console.log("Uspješno spajanje na bazu podataka");
-
-    return client.db(db_name);
+    let db = client.db(db_name);
+    return db;
   } catch (error) {
     console.error("Greška prilikom spajanja na bazu podataka", error);
     throw error;

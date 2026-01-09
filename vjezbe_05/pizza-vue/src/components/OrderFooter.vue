@@ -21,7 +21,9 @@
           class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg object-cover shadow-md"
         />
 
-        <h3 class="font-bold tracking-wide text-base sm:text-lg text-orange-400">
+        <h3
+          class="font-bold tracking-wide text-base sm:text-lg text-orange-400"
+        >
           {{ odabranaPizza.naziv }}
         </h3>
       </div>
@@ -66,8 +68,10 @@
         </button>
       </div>
 
-      <div class="w-full sm:w-auto text-center font-semibold text-lg text-orange-400 tracking-wide">
-        Ukupno: {{ ukupna_cijena_stavke || '0.00' }}€
+      <div
+        class="w-full sm:w-auto text-center font-semibold text-lg text-orange-400 tracking-wide"
+      >
+        Ukupno: {{ ukupna_cijena_stavke || "0.00" }}€
       </div>
 
       <button
@@ -102,7 +106,11 @@
 
           <div class="flex items-center gap-3">
             <div class="text-orange-400 font-semibold">
-              {{ (props.odabranaPizza.cijene[stavka.velicina] * stavka.kolicina).toFixed(2) }}€
+              {{
+                (
+                  props.odabranaPizza.cijene[stavka.velicina] * stavka.kolicina
+                ).toFixed(2)
+              }}€
             </div>
 
             <button
@@ -120,7 +128,9 @@
       v-if="prikaziModalDostava"
       class="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
     >
-      <div class="bg-slate-800 rounded-xl p-6 w-full max-w-md border border-slate-600 relative">
+      <div
+        class="bg-slate-800 rounded-xl p-6 w-full max-w-md border border-slate-600 relative"
+      >
         <button
           class="absolute top-2 right-3 text-slate-300 hover:text-white text-xl font-bold cursor-pointer"
           @click="prikaziModalDostava = false"
@@ -139,7 +149,9 @@
               placeholder="Prezime"
               class="mt-1 w-full px-3 py-2 rounded-lg bg-slate-700 border border-slate-500 outline-none"
             />
-            <p v-if="errors.prezime" class="text-red-400 text-xs mt-1">{{ errors.prezime }}</p>
+            <p v-if="errors.prezime" class="text-red-400 text-xs mt-1">
+              {{ errors.prezime }}
+            </p>
           </div>
 
           <div>
@@ -150,7 +162,9 @@
               placeholder="Adresa"
               class="mt-1 w-full px-3 py-2 rounded-lg bg-slate-700 border border-slate-500 outline-none"
             />
-            <p v-if="errors.adresa" class="text-red-400 text-xs mt-1">{{ errors.adresa }}</p>
+            <p v-if="errors.adresa" class="text-red-400 text-xs mt-1">
+              {{ errors.adresa }}
+            </p>
           </div>
 
           <div>
@@ -161,7 +175,9 @@
               placeholder="Telefon"
               class="mt-1 w-full px-3 py-2 rounded-lg bg-slate-700 border border-slate-500 outline-none"
             />
-            <p v-if="errors.telefon" class="text-red-400 text-xs mt-1">{{ errors.telefon }}</p>
+            <p v-if="errors.telefon" class="text-red-400 text-xs mt-1">
+              {{ errors.telefon }}
+            </p>
           </div>
         </div>
 
@@ -196,123 +212,135 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import axios from 'axios'
+import { ref, computed } from "vue";
+import axios from "axios";
 
 const props = defineProps({
   odabranaPizza: {
     type: Object,
     required: true,
   },
-})
+});
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(["close"]);
 
-const odabranaVelicina = ref('mala')
-const kolicina = ref(1)
-const narucene_pizze = ref([])
+const odabranaVelicina = ref("mala");
+const kolicina = ref(1);
+const narucene_pizze = ref([]);
 
-const statusPoruka = ref('')
-const statusTip = ref(null)
+const statusPoruka = ref("");
+const statusTip = ref(null);
 
 function ukloniStavku(index) {
-  narucene_pizze.value.splice(index, 1)
+  narucene_pizze.value.splice(index, 1);
 }
 
-const prikaziModalDostava = ref(false)
+const prikaziModalDostava = ref(false);
 
 const dostava = ref({
-  prezime: '',
-  adresa: '',
-  telefon: '',
-})
+  prezime: "",
+  adresa: "",
+  telefon: "",
+});
 
 const errors = ref({
-  prezime: '',
-  adresa: '',
-  telefon: '',
-})
+  prezime: "",
+  adresa: "",
+  telefon: "",
+});
 
 const ukupna_cijena_stavke = computed(() => {
-  const cijenaPoKomadu = props.odabranaPizza.cijene[odabranaVelicina.value] || 0
-  return (cijenaPoKomadu * kolicina.value).toFixed(2)
-})
+  const cijenaPoKomadu =
+    props.odabranaPizza.cijene[odabranaVelicina.value] || 0;
+  return (cijenaPoKomadu * kolicina.value).toFixed(2);
+});
 
 function dodajUNarudzbu() {
   const novaStavka = {
     naziv: props.odabranaPizza.naziv,
     velicina: odabranaVelicina.value,
     kolicina: kolicina.value,
+  };
+  narucene_pizze.value.push(novaStavka);
+}
+
+function izracunajCijenuStavke(stavka) {
+  if (stavka.naziv === props.odabranaPizza.naziv) {
+    const c = props.odabranaPizza.cijene[stavka.velicina] || 0;
+    return c * stavka.kolicina;
   }
-  narucene_pizze.value.push(novaStavka)
+  return 0;
 }
 
 function validateDostava() {
-  let ok = true
+  let ok = true;
 
-  errors.value = { prezime: '', adresa: '', telefon: '' }
+  errors.value = { prezime: "", adresa: "", telefon: "" };
 
   if (!dostava.value.prezime.trim()) {
-    errors.value.prezime = 'Prezime je obavezno'
-    ok = false
+    errors.value.prezime = "Prezime je obavezno";
+    ok = false;
   }
   if (!dostava.value.adresa.trim()) {
-    errors.value.adresa = 'Adresa je obavezna'
-    ok = false
+    errors.value.adresa = "Adresa je obavezna";
+    ok = false;
   }
   if (!dostava.value.telefon.trim()) {
-    errors.value.telefon = 'Telefon je obavezan'
-    ok = false
+    errors.value.telefon = "Telefon je obavezan";
+    ok = false;
   } else if (dostava.value.telefon.length < 6) {
-    errors.value.telefon = 'Telefon nije ispravan'
-    ok = false
+    errors.value.telefon = "Telefon nije ispravan";
+    ok = false;
   }
 
-  return ok
+  return ok;
 }
 
 async function posaljiNarudzbu() {
   try {
-    statusPoruka.value = ''
-    statusTip.value = null
+    statusPoruka.value = "";
+    statusTip.value = null;
 
     if (narucene_pizze.value.length === 0) {
-      statusPoruka.value = 'Košarica je prazna! Molimo dodajte pizze prije narudžbe.'
-      statusTip.value = 'error'
-      return
+      statusPoruka.value =
+        "Košarica je prazna! Molimo dodajte pizze prije narudžbe.";
+      statusTip.value = "error";
+      return;
     }
 
     if (!validateDostava()) {
-      statusPoruka.value = 'Molimo ispunite sve podatke za dostavu.'
-      statusTip.value = 'error'
-      return
+      statusPoruka.value = "Molimo ispunite sve podatke za dostavu.";
+      statusTip.value = "error";
+      return;
     }
 
-    const podaciZaDostavu = { ...dostava.value }
+    const podaciZaDostavu = { ...dostava.value };
 
-    const odgovor = await axios.post('http://localhost:3000/narudzbe', {
+    const odgovor = await axios.post("http://localhost:3000/narudzbe", {
       narucene_pizze: narucene_pizze.value,
       podaci_dostava: podaciZaDostavu,
-    })
+    });
 
     statusPoruka.value =
-      odgovor.data.poruka || odgovor.data.message || 'Narudžba je uspješno poslana.'
-    statusTip.value = 'success'
+      odgovor.data.poruka ||
+      odgovor.data.message ||
+      "Narudžba je uspješno poslana.";
+    statusTip.value = "success";
 
-    narucene_pizze.value = []
-    dostava.value = { prezime: '', adresa: '', telefon: '' }
-    errors.value = { prezime: '', adresa: '', telefon: '' }
-    prikaziModalDostava.value = false
+    narucene_pizze.value = [];
+    dostava.value = { prezime: "", adresa: "", telefon: "" };
+    errors.value = { prezime: "", adresa: "", telefon: "" };
+    prikaziModalDostava.value = false;
   } catch (error) {
-    console.error('Greška pri slanju narudžbe:', error)
+    console.error("Greška pri slanju narudžbe:", error);
 
     const porukaErrora =
       error.response?.data?.poruka ||
       error.response?.data?.message ||
-      'Došlo je do greške pri slanju narudžbe. Molimo pokušajte ponovno.'
+      "Došlo je do greške pri slanju narudžbe. Molimo pokušajte ponovno.";
 
-    statusPoruka.value = porukaErrora
-    statusTip.value = 'error'
+    statusPoruka.value = porukaErrora;
+    statusTip.value = "error";
   }
 }
 </script>

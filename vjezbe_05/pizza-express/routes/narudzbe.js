@@ -1,52 +1,27 @@
-import express from `express`;
+import express from "express";
 
-const router=express.Router();
+const router = express.Router();
 
+router.post("/", async (req, res) => {
+  const db = req.app.locals.db;
+  let total = 0;
 
-router.post('/', async (req, res) => {
-    try{
-        const db=req.app.local.db;
-        const {ime, adresa, telefon, narucene_pizze}=req.body;
+  for (const item of req.body.narucene_pizze) {
+    const pizza = await db.collection("pizze").findOne({ naziv: item.naziv });
 
-        if(
-            typeof ime!=="string" ||
-            typeof adresa!=="string" ||
-            typeof telefon===isNaN ||
-            !Array.isArray(narucene_pizze)
-        ){
-            return res.status(400).json({message: `Unijeli ste neispravne podatke!`});
-        }
+    if (!pizza) {
+      return res.status(400).json({
+        error: `Pizza '${item.naziv}' ne postoji u ponudi`,
+      });
+    }
 
-        let ukupnaCijena=0;
+    total += pizza.cijene[item.velicina] * item.kolicina;
+  }
 
-        for(const s of narucene_pizze){
-            const pizza=await db.collection("pizze").findOne({
-                neziv:{$regex:`^${stavka.naziv}$`, $options: "i" },
-            });
+  req.body.ukupna_cijena = total;
+  await db.collection("narudzbe").insertOne(req.body);
 
-            if (!pizza){
-                return res.status(400).json({message: "Ne postoji ta pizza u ponudi."})
-            }
-            
-            const cijena=pizza.cijene[s.velicina];
-            ukupnaCijena+=cijena*s.kolicina;
-        }
-        ukupnaCijena=Number(ukupnaCijena.toFixed(2));
-
-        const narudzba = {
-                ime,
-                adresa,
-                telefon,
-                narucene_pizze,
-                ukupna_cijena,
-                created_at: new Date(),
-                };
-        await db.collection("narudzbe").insertOne(narudzba);
-
-            res.status(201).json(narudzba);
-        } catch (err) {
-            res.status(500).json({ message: "Greška pri kreiranju narudžbe" });
-        }
+  res.json({ msg: "Narudžba zaprimljena", ukupno: total });
 });
 
 export default router;

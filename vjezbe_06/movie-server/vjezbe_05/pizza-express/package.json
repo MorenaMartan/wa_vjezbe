@@ -1,0 +1,24 @@
+{
+  "name": "wawa",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "type": "module",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "mongodb": "^7.0.0",
+    "oh-vue-icons": "^1.0.0-rc3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
